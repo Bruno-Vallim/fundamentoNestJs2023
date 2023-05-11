@@ -1,23 +1,25 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from "@nestjs/common";
 import { CreateUserDto } from "./dto/createUser.dto";
 import { UpdateUserDto } from "./dto/updateUser.dto";
 import { UpdatePartialUserDto } from "./dto/updatePartialUser.dto";
+import { UserService } from "./user.service";
 
 @Controller('users')
 export class UserController {
+    constructor(private readonly userService:UserService) {}
     @Post()
-    async create(@Body() payload:CreateUserDto) {
-        return {payload}
+    async create(@Body() payload: CreateUserDto) {
+        return this.userService.create(payload)
     }
-
+    
     @Get()
     async getAllUsers() {
-        return {users:[]}
+        return this.userService.getAll()
     }
 
     @Get(':id')
-    async getUser(@Param('id') params) {
-        return {user:{}}
+    async getUser(@Param('id', ParseIntPipe) id:number) {
+        return this.userService.getUserById(id)
     }
 
     @Put(':id')
